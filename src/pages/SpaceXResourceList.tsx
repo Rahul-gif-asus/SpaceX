@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { Table } from '@mantine/core';
+import { Link } from 'react-router-dom';
 
 const fetchLaunches = async () => {
   const { data } = await axios.get('https://api.spacexdata.com/v4/launches');
@@ -41,7 +42,11 @@ const SpaceXResourceList: React.FC = () => {
         <tbody>
           {filteredData.map((launch: any) => (
             <tr key={launch.id}>
-              <td>{launch.name}</td>
+              <td>
+                <Link to={`/spacex/launches/${launch.id}`}>
+                  {launch.name}
+                </Link>
+              </td>
               <td>{new Date(launch.date_utc).toLocaleDateString()}</td>
               <td>{launch.details || 'No details available'}</td>
             </tr>

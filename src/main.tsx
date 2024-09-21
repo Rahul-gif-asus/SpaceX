@@ -7,6 +7,7 @@ import Landing from './pages/Landing';
 import Login from './pages/Login'; // Import the Login page
 import PrivatePage from './pages/PrivatePage'; // Import the Private page
 import SpaceXResourceList from './pages/SpaceXResourceList';
+import SpaceXDetailPage from './pages/SpaceXDetailPage'; 
 export const routes = [
   {
     path: '/',
@@ -27,6 +28,9 @@ export const routes = [
       {
         path: '/spacex',
         element: <SpaceXResourceList />
+      },
+      { path: '/spacex/launches/:id', 
+        element: <SpaceXDetailPage /> 
       }
     ],
   },
