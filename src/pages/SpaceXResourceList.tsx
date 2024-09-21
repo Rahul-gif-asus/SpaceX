@@ -1,19 +1,22 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { Table, Input, Select, Loader } from '@mantine/core';
+import { Table, Input, Select, Loader, Pagination } from '@mantine/core';
 
-// Fetch SpaceX launches data from the SpaceX API
+// Fetch SpaceX launches from API
 const fetchLaunches = async () => {
   const { data } = await axios.get('https://api.spacexdata.com/v4/launches');
   return data;
 };
 
 const SpaceXResourceList: React.FC = () => {
-  const { data, isLoading, error } = useQuery(['spacexLaunches'], fetchLaunches);
+  const pageSize = 10; // Set the number of launches per page
+  const [page, setPage] = useState(1); // Pagination state
   const [searchTerm, setSearchTerm] = useState('');
   const [sortCriteria, setSortCriteria] = useState<'asc' | 'desc'>('asc');
   const [filterSuccess, setFilterSuccess] = useState<'all' | 'successful' | 'failed'>('all');
+
+  const { data, isLoading, error } = useQuery(['spacexLaunches'], fetchLaunches);
 
   if (isLoading) return <Loader />;
   if (error) return <p>Error loading SpaceX launches.</p>;
@@ -36,6 +39,10 @@ const SpaceXResourceList: React.FC = () => {
       : new Date(b.date_utc).getTime() - new Date(a.date_utc).getTime()
   );
 
+  // Apply pagination AFTER filtering and sorting
+  const totalFiltered = sortedData.length;
+  const paginatedData = sortedData.slice((page - 1) * pageSize, page * pageSize);
+
   return (
     <div>
       <h2>SpaceX Launches</h2>
@@ -44,7 +51,10 @@ const SpaceXResourceList: React.FC = () => {
       <Input
         placeholder="Search launches"
         value={searchTerm}
-        onChange={(e) => setSearchTerm(e.currentTarget.value)}
+        onChange={(e) => {
+          setSearchTerm(e.currentTarget.value);
+          setPage(1);  // Reset to first page when filter changes
+        }}
       />
 
       {/* Sort Selector */}
@@ -53,7 +63,10 @@ const SpaceXResourceList: React.FC = () => {
         placeholder="Pick one"
         value={sortCriteria}
         onChange={(value: 'asc' | 'desc' | null) => {
-          if (value) setSortCriteria(value); // Ensure value is not null
+          if (value) {
+            setSortCriteria(value);
+            setPage(1);  // Reset to first page when sorting changes
+          }
         }}
         data={[
           { value: 'asc', label: 'Ascending' },
@@ -67,7 +80,10 @@ const SpaceXResourceList: React.FC = () => {
         placeholder="Pick one"
         value={filterSuccess}
         onChange={(value: 'all' | 'successful' | 'failed' | null) => {
-          if (value) setFilterSuccess(value); // Ensure value is not null
+          if (value) {
+            setFilterSuccess(value);
+            setPage(1);  // Reset to first page when filtering changes
+          }
         }}
         data={[
           { value: 'all', label: 'All' },
@@ -87,7 +103,7 @@ const SpaceXResourceList: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {sortedData.map((launch: any) => (
+          {paginatedData.map((launch: any) => (
             <tr key={launch.id}>
               <td>{launch.name}</td>
               <td>{new Date(launch.date_utc).toLocaleDateString()}</td>
@@ -97,6 +113,13 @@ const SpaceXResourceList: React.FC = () => {
           ))}
         </tbody>
       </Table>
+
+      {/* Pagination Component */}
+      <Pagination
+        value={page}  // Use 'value' instead of 'page'
+        onChange={setPage}  // 'onChange' remains the same
+        total={Math.ceil(totalFiltered / pageSize)}  // Total filtered data length
+      />
     </div>
   );
 };
