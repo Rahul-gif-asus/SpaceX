@@ -13,8 +13,13 @@
   padding: 0;
   font-family: abstracts.$font;
   font-weight: normal;
+  box-sizing: border-box;
 }
 
+body {
+  margin: 0;
+  padding: 0;
+}
 .display1 {
   font-size: abstracts.$display1;
 }
