@@ -40,7 +40,10 @@ const Landing = () => {
       <section id="features" className="features-section">
         <Container>
           <Text size="lg" weight={700} align="center" mt="xl" mb="md">Why Choose Our Explorer?</Text>
-          <SimpleGrid cols={3} spacing="xl" mt="md">
+          <SimpleGrid cols={3} spacing="xl" mt="md" breakpoints={[
+            { maxWidth: 'md', cols: 1 }, // Make grid responsive on smaller screens
+            { maxWidth: 'sm', cols: 1 }
+          ]}>
             <div className="feature">
               <IconRocket size={60} color="blue" />
               <Text size="lg" weight={500} align="center" mt="sm">Real-Time Data</Text>

@@ -4,34 +4,21 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App from './App';
 import Landing from './pages/Landing';
-import Login from './pages/Login'; // Import the Login page
-import PrivatePage from './pages/PrivatePage'; // Import the Private page
+import Login from './pages/Login';
+import PrivatePage from './pages/PrivatePage';
 import SpaceXResourceList from './pages/SpaceXResourceList';
-import SpaceXDetailPage from './pages/SpaceXDetailPage'; 
+import SpaceXDetailPage from './pages/SpaceXDetailPage';
+
 export const routes = [
   {
     path: '/',
-    element: <App />, // This will render the App component with Outlet for children
+    element: <App />,
     children: [
-      {
-        path: '/', // Root path for the landing page
-        element: <Landing />,
-      },
-      {
-        path: '/login', // Define the login route
-        element: <Login />,
-      },
-      {
-        path: '/private', // Define the private route
-        element: <PrivatePage />,
-      },
-      {
-        path: '/spacex',
-        element: <SpaceXResourceList />
-      },
-      { path: '/spacex/launches/:id', 
-        element: <SpaceXDetailPage /> 
-      }
+      { path: '/', element: <Landing /> },
+      { path: '/login', element: <Login /> },
+      { path: '/private', element: <PrivatePage /> },
+      { path: '/spacex', element: <SpaceXResourceList /> },
+      { path: '/spacex/launches/:id', element: <SpaceXDetailPage /> }
     ],
   },
 ];

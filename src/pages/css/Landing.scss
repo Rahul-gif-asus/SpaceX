@@ -3,24 +3,32 @@
 
   .landing-header {
     background-color: #0d1b2a;
-    padding: 1rem 0;
+    padding: 1.5rem 0;
     color: white;
-
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    /* Ensure the header is properly styled */
     .header-content {
       display: flex;
       justify-content: space-between;
       align-items: center;
-
+      padding: 0 2rem;
       nav ul {
         display: flex;
         list-style-type: none;
-
         li {
           margin-left: 2rem;
           a {
             color: white;
             text-decoration: none;
             font-weight: 600;
+            transition: color 0.3s ease;
+            &:hover {
+              color: #66FCF1; /* Add hover effect */
+            }
           }
         }
       }
@@ -31,6 +39,7 @@
     padding: 5rem 0;
     background-color: #f4f4f4;
     text-align: center;
+    margin-top: 4rem;
 
     h2 {
       font-size: 2.5rem;
@@ -48,6 +57,26 @@
 
     .feature {
       text-align: center;
+
+      /* Restore the icons for the feature section */
+      i {
+        display: block;
+        font-size: 4rem;
+        color: #3D4C7E; /* Restore the correct color for the icons */
+        margin-bottom: 1rem;
+      }
+
+      .icon-real-time {
+        color: #3D4C7E;
+      }
+
+      .icon-filter {
+        color: #7076B6;
+      }
+
+      .icon-ui {
+        color: #E2E4F0;
+      }
     }
   }
 
@@ -62,13 +91,11 @@
     color: white;
     padding: 2rem 0;
     text-align: center;
-
     nav ul {
       display: flex;
       justify-content: center;
       list-style-type: none;
       padding: 0;
-
       li {
         margin-left: 1.5rem;
         a {
@@ -76,6 +103,31 @@
           text-decoration: none;
         }
       }
+    }
+  }
+}
+.hero-section {
+  background-image: url('https://images.unsplash.com/photo-1673209034091-fa720e36e327?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
+  color: white; 
+  text-align: center;
+  padding: 6rem 0;
+  
+
+
+  button {
+    margin: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    height: 70vh; /* Adjust height for mobile */
+    h2 {
+      font-size: 1.8rem; /* Adjust font size for smaller screens */
     }
   }
 }
