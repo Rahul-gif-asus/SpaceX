@@ -18,7 +18,11 @@ const SpaceXResourceList: React.FC = () => {
 
   const { data, isLoading, error } = useQuery(['spacexLaunches'], fetchLaunches);
 
-  if (isLoading) return <Loader />;
+  if (isLoading) return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Loader />
+    </div>
+  );
   if (error) return <p>Error loading SpaceX launches.</p>;
 
   // Filter and Search functionality
@@ -44,56 +48,63 @@ const SpaceXResourceList: React.FC = () => {
   const paginatedData = sortedData.slice((page - 1) * pageSize, page * pageSize);
 
   return (
-    <div>
-      <h2>SpaceX Launches</h2>
+    <div style={{ padding: '2rem' }}>
+      <h1 style={{ marginBottom: '1.5rem', color: 'black', fontFamily: 'SpaceX, sans-serif' }}>
+        Search SpaceX Launches
+      </h1>
 
-      {/* Search Input */}
-      <Input
-        placeholder="Search launches"
-        value={searchTerm}
-        onChange={(e) => {
-          setSearchTerm(e.currentTarget.value);
-          setPage(1);  // Reset to first page when filter changes
-        }}
-      />
 
-      {/* Sort Selector */}
-      <Select
-        label="Sort by Date"
-        placeholder="Pick one"
-        value={sortCriteria}
-        onChange={(value: 'asc' | 'desc' | null) => {
-          if (value) {
-            setSortCriteria(value);
-            setPage(1);  // Reset to first page when sorting changes
-          }
-        }}
-        data={[
-          { value: 'asc', label: 'Ascending' },
-          { value: 'desc', label: 'Descending' },
-        ]}
-      />
+      <div style={{ marginBottom: '2rem' }}>
+        {/* Search Input */}
+        <Input
+          placeholder="Search launches"
+          value={searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.currentTarget.value);
+            setPage(1);  // Reset to first page when filter changes
+          }}
+          style={{ marginBottom: '1rem' }}
+        />
 
-      {/* Filter for Success/Failure */}
-      <Select
-        label="Filter by Launch Status"
-        placeholder="Pick one"
-        value={filterSuccess}
-        onChange={(value: 'all' | 'successful' | 'failed' | null) => {
-          if (value) {
-            setFilterSuccess(value);
-            setPage(1);  // Reset to first page when filtering changes
-          }
-        }}
-        data={[
-          { value: 'all', label: 'All' },
-          { value: 'successful', label: 'Successful' },
-          { value: 'failed', label: 'Failed' },
-        ]}
-      />
+        {/* Sort Selector */}
+        <Select
+          label="Sort by Date"
+          placeholder="Pick one"
+          value={sortCriteria}
+          onChange={(value: 'asc' | 'desc' | null) => {
+            if (value) {
+              setSortCriteria(value);
+              setPage(1);  // Reset to first page when sorting changes
+            }
+          }}
+          data={[
+            { value: 'asc', label: 'Ascending' },
+            { value: 'desc', label: 'Descending' },
+          ]}
+          style={{ marginBottom: '1rem' }}
+        />
+
+        {/* Filter for Success/Failure */}
+        <Select
+          label="Filter by Launch Status"
+          placeholder="Pick one"
+          value={filterSuccess}
+          onChange={(value: 'all' | 'successful' | 'failed' | null) => {
+            if (value) {
+              setFilterSuccess(value);
+              setPage(1);  // Reset to first page when filtering changes
+            }
+          }}
+          data={[
+            { value: 'all', label: 'All' },
+            { value: 'successful', label: 'Successful' },
+            { value: 'failed', label: 'Failed' },
+          ]}
+        />
+      </div>
 
       {/* Table to display data */}
-      <Table>
+      <Table style={{ marginTop: '2rem' }}>
         <thead>
           <tr>
             <th>Name</th>
@@ -116,9 +127,10 @@ const SpaceXResourceList: React.FC = () => {
 
       {/* Pagination Component */}
       <Pagination
-        value={page}  // Use 'value' instead of 'page'
-        onChange={setPage}  // 'onChange' remains the same
-        total={Math.ceil(totalFiltered / pageSize)}  // Total filtered data length
+        value={page}
+        onChange={setPage}
+        total={Math.ceil(totalFiltered / pageSize)}
+        style={{ marginTop: '1rem' }}
       />
     </div>
   );
