@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { Table, Input, Select, Loader, Pagination } from '@mantine/core';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 // Fetch SpaceX launches from API
 const fetchLaunches = async () => {
@@ -15,14 +16,16 @@ const SpaceXResourceList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortCriteria, setSortCriteria] = useState<'asc' | 'desc'>('asc');
   const [filterSuccess, setFilterSuccess] = useState<'all' | 'successful' | 'failed'>('all');
+  const navigate = useNavigate(); // Initialize navigate function for redirection
 
   const { data, isLoading, error } = useQuery(['spacexLaunches'], fetchLaunches);
 
-  if (isLoading) return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      <Loader />
-    </div>
-  );
+  if (isLoading)
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <Loader />
+      </div>
+    );
   if (error) return <p>Error loading SpaceX launches.</p>;
 
   // Filter and Search functionality
@@ -47,12 +50,16 @@ const SpaceXResourceList: React.FC = () => {
   const totalFiltered = sortedData.length;
   const paginatedData = sortedData.slice((page - 1) * pageSize, page * pageSize);
 
+  // Handle row click to navigate to SpaceXDetailPage
+  const handleRowClick = (launchId: string) => {
+    navigate(`/spacex/launches/${launchId}`); // Pass launchId in the URL for the detail page
+  };
+
   return (
     <div style={{ padding: '2rem' }}>
       <h1 style={{ marginBottom: '1.5rem', color: 'black', fontFamily: 'SpaceX, sans-serif' }}>
         Search SpaceX Launches
       </h1>
-
 
       <div style={{ marginBottom: '2rem' }}>
         {/* Search Input */}
@@ -61,7 +68,7 @@ const SpaceXResourceList: React.FC = () => {
           value={searchTerm}
           onChange={(e) => {
             setSearchTerm(e.currentTarget.value);
-            setPage(1);  // Reset to first page when filter changes
+            setPage(1); // Reset to first page when filter changes
           }}
           style={{ marginBottom: '1rem' }}
         />
@@ -74,7 +81,7 @@ const SpaceXResourceList: React.FC = () => {
           onChange={(value: 'asc' | 'desc' | null) => {
             if (value) {
               setSortCriteria(value);
-              setPage(1);  // Reset to first page when sorting changes
+              setPage(1); // Reset to first page when sorting changes
             }
           }}
           data={[
@@ -92,7 +99,7 @@ const SpaceXResourceList: React.FC = () => {
           onChange={(value: 'all' | 'successful' | 'failed' | null) => {
             if (value) {
               setFilterSuccess(value);
-              setPage(1);  // Reset to first page when filtering changes
+              setPage(1); // Reset to first page when filtering changes
             }
           }}
           data={[
@@ -104,22 +111,33 @@ const SpaceXResourceList: React.FC = () => {
       </div>
 
       {/* Table to display data */}
-      <Table style={{ marginTop: '2rem' }}>
+      <Table style={{ marginTop: '2rem', borderCollapse: 'collapse', width: '100%' }}>
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Date</th>
-            <th>Details</th>
-            <th>Success</th>
+            <th style={{ padding: '10px', textAlign: 'left', borderBottom: '2px solid #ddd' }}>Name</th>
+            <th style={{ padding: '10px', textAlign: 'left', borderBottom: '2px solid #ddd' }}>Date</th>
+            <th style={{ padding: '10px', textAlign: 'left', borderBottom: '2px solid #ddd' }}>Details</th>
+            <th style={{ padding: '10px', textAlign: 'left', borderBottom: '2px solid #ddd' }}>Success</th>
           </tr>
         </thead>
         <tbody>
           {paginatedData.map((launch: any) => (
-            <tr key={launch.id}>
-              <td>{launch.name}</td>
-              <td>{new Date(launch.date_utc).toLocaleDateString()}</td>
-              <td>{launch.details || 'No details available'}</td>
-              <td>{launch.success ? 'Yes' : 'No'}</td>
+            <tr
+              key={launch.id}
+              onClick={() => handleRowClick(launch.id)} // Row becomes clickable
+              style={{
+                cursor: 'pointer',
+                transition: 'background-color 0.3s',
+                borderBottom: '1px solid #ddd'
+             
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f0f0f0')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'white')}
+            >
+              <td style={{ padding: '10px' }}>{launch.name}</td>
+              <td style={{ padding: '10px' }}>{new Date(launch.date_utc).toLocaleDateString()}</td>
+              <td style={{ padding: '10px' }}>{launch.details || 'No details available'}</td>
+              <td style={{ padding: '10px' }}>{launch.success ? 'Yes' : 'No'}</td>
             </tr>
           ))}
         </tbody>
