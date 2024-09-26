@@ -1,8 +1,7 @@
-// src/pages/Login.tsx
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, TextInput, Container, Paper, Title } from '@mantine/core';
+import { showNotification } from '@mantine/notifications'; // Import showNotification
 import { useAuthStore } from '../store/app.store';
 
 const Login = () => {
@@ -12,12 +11,26 @@ const Login = () => {
   const login = useAuthStore((state) => state.login);
 
   const handleSubmit = () => {
-    // Mock login, no validation for username/password since it's frontend only
     if (username && password) {
       login(); // Call login function from Zustand store
+
+      showNotification({
+        title: 'Login Successful',
+        message: `Welcome, ${username}! You have successfully logged in.`,
+        color: 'green',
+        autoClose: 3000, // Automatically close after 3 seconds
+        withCloseButton: false,
+      });
+
       navigate('/private/spacexresourcelistpage'); // Redirect to private page after login
     } else {
-      alert('Please enter username and password');
+      showNotification({
+        title: 'Login Failed',
+        message: 'Please enter both username and password.',
+        color: 'red',
+        autoClose: 3000, 
+        withCloseButton: false,
+      });
     }
   };
 

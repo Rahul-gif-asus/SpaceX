@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import {
-  Container, Text, Loader, Paper, Title, Group, Badge, Anchor, Image, Grid, Button, Card,
-  Divider, Space,
+  Container, Text, Loader, Paper, Title, Group, Badge, Button, Card,
+  Divider, Grid, Image, Modal
 } from '@mantine/core';
+import { showNotification, updateNotification } from '@mantine/notifications'; // Import updateNotification
+import LogoutButton from '../components/Logout';
 
 // Fetch launch details based on the launch ID
 const fetchLaunchById = async (id: string) => {
@@ -21,26 +23,93 @@ const fetchRocketById = async (rocketId: string) => {
 
 const SpaceXDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const [loadingMessage, setLoadingMessage] = useState('Fetching SpaceX Launch details...');
+  const [opened, setOpened] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   if (!id) {
     return <Text color="red">Launch ID is missing!</Text>;
   }
 
+  // Launch Data Query
   const { data: launchData, isLoading: isLoadingLaunch, error: errorLaunch } = useQuery(['launchDetail', id], () => fetchLaunchById(id));
 
+  // Rocket Data Query
   const { data: rocketData, isLoading: isLoadingRocket, error: errorRocket } = useQuery(
     ['rocketDetail', launchData?.rocket],
     () => fetchRocketById(launchData?.rocket),
     { enabled: !!launchData?.rocket }
   );
 
-  if (isLoadingLaunch) return <Loader />;
-  if (errorLaunch) return <Text color="red">Error loading launch details.</Text>;
+  // Notifications for loading launch data
+  useEffect(() => {
+    if (isLoadingLaunch) {
+      showNotification({
+        id: 'loading-launch-data',
+        title: 'Loading Launch Data',
+        message: 'Fetching SpaceX launch details...',
+        color: 'blue',
+        autoClose: false, // Keep notification open until manually closed or updated
+        withCloseButton: false,
+      });
+
+      const timeout = setTimeout(() => {
+        setLoadingMessage('Thanks for your patience...');
+      }, 5000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [isLoadingLaunch]);
+
+  // Notifications for successful launch data load
+  useEffect(() => {
+    if (launchData) {
+      updateNotification({
+        id: 'loading-launch-data',
+        title: 'Launch Data Loaded',
+        message: `Successfully loaded SpaceX launch data for ${launchData.name}.`,
+        color: 'green',
+        autoClose: 3000, // Automatically close after 3 seconds
+        withCloseButton: false,
+      });
+    }
+  }, [launchData]);
+
+  // Handling errors
+  if (errorLaunch) {
+    showNotification({
+      title: 'Error Loading Launch Data',
+      message: 'There was an error loading SpaceX launch data. Please try again later.',
+      color: 'red',
+      withCloseButton: false,
+      autoClose: 3000,
+    });
+    return <Text color="red">Error loading launch details.</Text>;
+  }
+
+  // Image preview functionality
+  const handleImageClick = (image: string) => {
+    setSelectedImage(image);
+    setOpened(true);
+  };
+
+  // Loading Screen
+  if (isLoadingLaunch) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column' }}>
+        <Loader size="lg" variant="dots" />
+        <Text mt="md">{loadingMessage}</Text>
+      </div>
+    );
+  }
 
   return (
     <Container size="lg">
+      <LogoutButton />
       <Card shadow="lg" padding="lg" radius="md" withBorder style={{ backgroundColor: '#f9f9f9', borderRadius: '16px' }}>
-        <Title order={2} mb="lg" align="center" style={{ fontWeight: 700, fontSize: '1.5rem', color: '#2C3E50' }}>Launch Details for {launchData.name}</Title>
+        <Title order={2} mb="lg" align="center" style={{ fontWeight: 700, fontSize: '1.5rem', color: '#2C3E50' }}>
+          Launch Details for {launchData.name}
+        </Title>
         <Group spacing="xl" position="center">
           <Text><strong>Date:</strong> {new Date(launchData.date_utc).toLocaleDateString()}</Text>
           <Text><strong>Flight Number:</strong> {launchData.flight_number}</Text>
@@ -120,7 +189,7 @@ const SpaceXDetailPage: React.FC = () => {
             {/* Rocket Second Stage */}
             <Title order={4} mt="lg" align="center" style={{ color: '#2980B9' }}>Second Stage</Title>
             <Group spacing="xl" position="center" mt="md">
-              <Text><strong>Thrust:</strong> {rocketData.second_stage.thrust.kN} kN</Text>
+              <Text><strong>Thrust:</strong> {rocketData.second_stage.thrust.kN}</Text>
               <Text><strong>Fuel Amount:</strong> {rocketData.second_stage.fuel_amount_tons} tons</Text>
               <Text><strong>Burn Time:</strong> {rocketData.second_stage.burn_time_sec} seconds</Text>
             </Group>
@@ -137,29 +206,40 @@ const SpaceXDetailPage: React.FC = () => {
               </Paper>
             )}
 
-            {/* Flickr Images */}
+            {/* Flickr Images with Preview */}
             <Title order={4} mt="lg" align="center" style={{ color: '#2980B9' }}>Flickr Images</Title>
             <Grid mt="md">
               {rocketData.flickr_images.map((image: string, index: number) => (
                 <Grid.Col span={4} key={index}>
-                <Image
-                  src={image}
-                  alt={`Rocket Image ${index}`}
-                  radius="lg"
-                  sx={{
-                    transition: 'transform 0.3s',
-                    '&:hover': {
-                      transform: 'scale(1.05)',
-                    },
-                  }}
-                />
-              </Grid.Col>
-              
+                  <Image
+                    src={image}
+                    alt={`Rocket Image ${index}`}
+                    radius="lg"
+                    sx={{
+                      transition: 'transform 0.3s',
+                      '&:hover': {
+                        transform: 'scale(1.05)',
+                        cursor: 'pointer',
+                      },
+                    }}
+                    onClick={() => handleImageClick(image)} // Open image in Modal on click
+                  />
+                </Grid.Col>
               ))}
             </Grid>
           </Paper>
         )}
       </Card>
+
+      {/* Modal for Image Preview */}
+      <Modal
+        opened={opened}
+        onClose={() => setOpened(false)}
+        size="xl"
+        title="Rocket Image Preview"
+      >
+        <Image src={selectedImage!} radius="md" />
+      </Modal>
     </Container>
   );
 };

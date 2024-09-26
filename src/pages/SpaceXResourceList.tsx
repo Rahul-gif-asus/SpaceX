@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { Table, Input, Select, Loader, Pagination } from '@mantine/core';
+import { Table, Input, Select, Loader, Pagination, Text } from '@mantine/core';
+import { showNotification, updateNotification } from '@mantine/notifications'; // Import updateNotification
+import LogoutButton from '../components/Logout';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 // Fetch SpaceX launches from API
@@ -16,17 +18,62 @@ const SpaceXResourceList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortCriteria, setSortCriteria] = useState<'asc' | 'desc'>('asc');
   const [filterSuccess, setFilterSuccess] = useState<'all' | 'successful' | 'failed'>('all');
+  const [loadingMessage, setLoadingMessage] = useState('Fetching SpaceX Launches...'); // Custom loading message
   const navigate = useNavigate(); // Initialize navigate function for redirection
 
   const { data, isLoading, error } = useQuery(['spacexLaunches'], fetchLaunches);
 
-  if (isLoading)
+  // Show loading notification when data is loading
+  useEffect(() => {
+    if (isLoading) {
+      showNotification({
+        id: 'loading-data',  // Provide a unique ID to avoid multiple notifications
+        title: 'Loading Data',
+        message: 'Fetching SpaceX launches...',
+        color: 'blue',
+        autoClose: false, // Keep it open until the data loads
+        withCloseButton: false,
+      });
+
+      const timeout = setTimeout(() => {
+        setLoadingMessage('Thanks for your patience...');
+      }, 5000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [isLoading]);
+
+  // Update notification once data is successfully loaded
+  useEffect(() => {
+    if (data) {
+      updateNotification({
+        id: 'loading-data',  // Reference the same ID to update the notification
+        title: 'Launches Loaded',
+        message: 'Successfully loaded SpaceX launches data.',
+        color: 'green',
+        autoClose: 2500,  // Automatically close after 2.5 seconds
+        withCloseButton: false,
+      });
+    }
+  }, [data]);
+
+  if (isLoading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <Loader />
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column' }}>
+        <Loader size="lg" variant="dots" />
+        <Text mt="md">{loadingMessage}</Text>
       </div>
     );
-  if (error) return <p>Error loading SpaceX launches.</p>;
+  }
+
+  if (error) {
+    showNotification({
+      title: 'Error Loading Data',
+      message: 'There was an error loading SpaceX launches. Please try again later.',
+      color: 'red',
+    });
+    return <Text color="red">Error loading SpaceX launches.</Text>;
+  }
 
   // Filter and Search functionality
   const filteredData = data.filter((launch: any) => {
@@ -57,6 +104,8 @@ const SpaceXResourceList: React.FC = () => {
 
   return (
     <div style={{ padding: '2rem' }}>
+      <LogoutButton />
+
       <h1 style={{ marginBottom: '1.5rem', color: 'black', fontFamily: 'SpaceX, sans-serif' }}>
         Search SpaceX Launches
       </h1>
@@ -128,8 +177,7 @@ const SpaceXResourceList: React.FC = () => {
               style={{
                 cursor: 'pointer',
                 transition: 'background-color 0.3s',
-                borderBottom: '1px solid #ddd'
-             
+                borderBottom: '1px solid #ddd',
               }}
               onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f0f0f0')}
               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'white')}
