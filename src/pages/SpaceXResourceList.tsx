@@ -52,7 +52,7 @@ const SpaceXResourceList: React.FC = () => {
 
   // Handle row click to navigate to SpaceXDetailPage
   const handleRowClick = (launchId: string) => {
-    navigate(`/spacex/launches/${launchId}`); // Pass launchId in the URL for the detail page
+    navigate(`/private/spacexdetailpage/${launchId}`); // Pass launchId in the URL for the detail page
   };
 
   return (

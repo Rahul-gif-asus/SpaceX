@@ -9,13 +9,13 @@ interface AuthState {
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
-  isAuthenticated: localStorage.getItem('isAuthenticated') === 'true', // Persisted state
+  isAuthenticated: localStorage.getItem('isAuthenticated') === 'true', // Persist auth state in localStorage
   login: () => {
-    localStorage.setItem('isAuthenticated', 'true'); // Save to localStorage
+    localStorage.setItem('isAuthenticated', 'true'); // Store in localStorage on login
     set({ isAuthenticated: true });
   },
   logout: () => {
-    localStorage.removeItem('isAuthenticated'); // Remove from localStorage
+    localStorage.removeItem('isAuthenticated'); // Clear localStorage on logout
     set({ isAuthenticated: false });
   },
 }));

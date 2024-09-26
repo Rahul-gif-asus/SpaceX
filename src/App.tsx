@@ -1,13 +1,14 @@
-import React from 'react';
-import { Outlet } from 'react-router-dom';
-import './App.scss'; // Global styles
+// src/App.tsx
 
-const App: React.FC = () => {
+import { Outlet } from 'react-router-dom';
+import './App.scss';
+
+function App() {
   return (
     <div>
-      <Outlet /> {/* This renders the child routes */}
+      <Outlet />  
     </div>
   );
-};
+}
 
 export default App;
