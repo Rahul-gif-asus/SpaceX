@@ -1,17 +1,17 @@
 import { Button } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../store/app.store'; // Import Zustand store
 
 const LogoutButton: React.FC = () => {
   const navigate = useNavigate();
+  const logout = useAuthStore((state) => state.logout); // Get logout function from Zustand
 
   const handleLogout = () => {
-    // Clear auth tokens from local storage or session storage
-    localStorage.removeItem('isAuthenticated'); // Remove token from local storage
-   
+    // Call Zustand logout which clears the auth state and localStorage
+    logout(); 
     
-    
-    // Show a logout notification
+    // Show logout notification
     showNotification({
       title: 'Logout Successful',
       message: 'You have successfully logged out. Redirecting to login page...',
@@ -19,7 +19,7 @@ const LogoutButton: React.FC = () => {
       autoClose: 2500,
     });
 
-    // Redirect to login page after a small delay
+    // Redirect to login page after delay
     setTimeout(() => {
       navigate('/login');
     }, 2500);

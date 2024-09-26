@@ -1,14 +1,56 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom'; // Import useLocation
 import { Button, TextInput, Container, Paper, Title } from '@mantine/core';
-import { showNotification } from '@mantine/notifications'; // Import showNotification
+import { showNotification, cleanNotifications } from '@mantine/notifications'; // Import cleanNotifications
 import { useAuthStore } from '../store/app.store';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
-  const login = useAuthStore((state) => state.login);
+  const location = useLocation(); // Capture previous location
+
+  // Zustand store for managing auth state
+  const { isAuthenticated, login } = useAuthStore((state) => ({
+    isAuthenticated: state.isAuthenticated,
+    login: state.login,
+  }));
+
+  // Check if the user was redirected from a private route
+  useEffect(() => {
+    if (location.state?.from && !isAuthenticated) {
+      // If the user was redirected, show a notification
+      showNotification({
+        id: 'redirected-login', // Unique ID to avoid duplication
+        title: 'Access Denied',
+        message: 'Please log in to access the requested page.',
+        color: 'yellow',
+        autoClose: 3000, // Automatically close after 3 seconds
+        withCloseButton: false,
+      });
+    }
+  }, [location, isAuthenticated]);
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      // Clear any previous notifications
+      cleanNotifications();
+
+      // Show notification that user is already logged in
+      showNotification({
+        id: 'already-logged-in', // Unique ID to prevent duplicate notifications
+        title: 'Already Logged In',
+        message: 'You are already logged in, redirecting to SpaceX Resource List page.',
+        color: 'blue',
+        autoClose: 3000, // Automatically close after 3 seconds
+        withCloseButton: false,
+      });
+
+      // Redirect to the resource list page
+      navigate('/private/spacexresourcelistpage'); // Redirect to private page if logged in
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = () => {
     if (username && password) {
