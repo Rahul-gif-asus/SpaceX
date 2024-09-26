@@ -2,7 +2,7 @@
 
 A React-based web application to explore SpaceX launches with advanced features like sorting, filtering, searching, and pagination. Built with React, Vite, TypeScript, Mantine UI, and powered by the SpaceX API.
 
-![SpaceX Launch Explorer Screenshot](https://via.placeholder.com/800x400) <!-- Add a relevant screenshot here -->
+![SpaceX Launch Explorer Screenshot](https://res.cloudinary.com/dnqvg9dhl/image/upload/v1727381662/Untitled_ysr63j.png) <!-- Add a relevant screenshot here -->
 
 ## 🛠 Features
 
