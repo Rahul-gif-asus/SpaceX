@@ -1,22 +1,25 @@
 # 🚀 SpaceX Launch Explorer
 
-A React-based web application to explore SpaceX launches with advanced features like sorting, filtering, searching, and pagination. Built with React, Vite, TypeScript, Mantine UI, and powered by the SpaceX API.
+A React-based web application to explore SpaceX launches with advanced features like sorting, filtering, searching, and pagination. Built with React, Vite, TypeScript, Mantine UI, Zustand for state management, and powered by the SpaceX API.
 
-![SpaceX Launch Explorer Screenshot](https://res.cloudinary.com/dnqvg9dhl/image/upload/v1727381662/Untitled_ysr63j.png) <!-- Add a relevant screenshot here -->
+![SpaceX Launch Explorer Screenshot](https://res.cloudinary.com/dnqvg9dhl/image/upload/v1727381662/Untitled_ysr63j.png)
 
 ## 🛠 Features
 
 - **Launch Listings**: View a list of SpaceX launches with search, filter, and sort capabilities.
-- **Launch Details**: Detailed view of individual launches, including information about the rocket and success status.
+- **Launch Details**: Detailed view of individual launches, including information about the rocket, success status, and links to resources like webcast, articles, and Wikipedia.
 - **Pagination**: Efficient pagination with customizable page size.
 - **Search & Filter**: Search for launches by name and filter by success/failure status.
 - **Sorting**: Sort launches by ascending or descending date.
-- **Authentication** (To be implemented): Protect certain pages using token-based authentication.
+- **Authentication**: Token-based authentication for accessing private routes.
+- **Responsive Design**: Fully responsive UI for all screen sizes.
+- **State Management**: Zustand for managing global state in a scalable and performant way.
 
 ## 🎨 Tech Stack
 
 - **Frontend**: React, TypeScript, Vite
 - **UI Components**: Mantine UI, Axios, React-Query
+- **State Management**: Zustand
 - **API**: SpaceX API v4
 - **Backend** (To be implemented): MongoDB for session management, token-based authentication
 
@@ -32,15 +35,22 @@ A React-based web application to explore SpaceX launches with advanced features 
 ├── vite.config.ts
 ├── src
 │   ├── components
-│   │   └── PrivateRoute.tsx
+│   │   └── Logout.tsx
 │   ├── pages
 │   │   └── Landing.tsx
 │   │   └── Login.tsx
-│   │   └── PrivatePage.tsx
 │   │   └── SpaceXDetailPage.tsx
 │   │   └── SpaceXResourceList.tsx
+│   │   └── css
+│   │       └── Landing.scss
+│   │       └── SpaceXDetailPage.scss
+│   │       └── SpaceXResourceList.scss
+│   ├── routes
+│   │   └── PrivateRoute.tsx
 │   ├── store
-│   │   └── app.store.ts
+│   │   └── auth.store.ts
+│   │   └── launch.store.ts
+│   │   └── ui.store.ts
 │   ├── styles
 │   │   └── abstracts
 │   │       └── _colours.scss
@@ -51,11 +61,10 @@ A React-based web application to explore SpaceX launches with advanced features 
 
 ## 🚀 Getting Started
 
-To get started with the project, follow these steps:
-
 ### Prerequisites
 
 Ensure you have the following installed:
+
 - Node.js (>= 14.x)
 - npm or yarn
 
@@ -114,31 +123,18 @@ We use the SpaceX API to fetch launch data. Here are the key API routes used in 
 
 - `GET /launches` – Fetches all launches.
 - `GET /launches/:id` – Fetches details of a specific launch.
-- **Future Enhancements**: Additional data from the SpaceX API (like rockets, ships) will be integrated in future releases.
 
-## 🎨 UI Improvements (Upcoming)
+## 🛠 Authentication
 
-- Add better styling for the landing, login, and resources pages.
-- Create consistent and responsive designs using Mantine.
-- Add loading spinners and user-friendly error messages.
+- Token-based authentication has been implemented for securing private routes.
+- User session data is stored securely in MongoDB.
 
-## 🛠️ Authentication (Upcoming)
+## 🎯 Bonus Features
 
-- Implement token-based authentication.
-- Store tokens securely in MongoDB.
-- Protect routes like `/private` using authenticated user sessions.
+- **Gallery Images**: View images related to rockets on the SpaceX detail page.
+- **Fairing and Core Details**: View fairing and core information for each launch.
+- **Back Navigation**: Easily navigate back to the resource list using the back button on the detail page.
 
-## 💡 Future Features
-
-- **Resource List Filtering**: Advanced filters and querying for SpaceX data.
-- **Real-time Updates**: Auto-refresh launch data with live updates.
-- **User Dashboard**: Create a user dashboard for logged-in users.
-  
-## 🎯 Bonus Features (To Be Integrated)
-
-- **Deep Linking**: Allow users to share links to filtered results or specific launch details.
-- **Advanced Search**: Implement advanced search with more query capabilities (e.g., search by rocket type, mission status).
-  
 ## 🧪 Testing (Planned)
 
 We plan to integrate testing using:
