@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from 'react-router-dom';
-import { useAuthStore } from '../store/app.store';
+import { useAuthStore } from '../store/auth.store';
 import { showNotification } from '@mantine/notifications';
 import { useEffect } from 'react';
 

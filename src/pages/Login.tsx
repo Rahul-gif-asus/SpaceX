@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button, TextInput, Container, Paper, Title } from '@mantine/core';
 import { showNotification, cleanNotifications } from '@mantine/notifications'; // Import cleanNotifications
-import { useAuthStore } from '../store/app.store';
+import { useAuthStore } from '../store/auth.store';
 
 const Login = () => {
   const [username, setUsername] = useState('');

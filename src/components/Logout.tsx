@@ -1,7 +1,7 @@
 import { Button } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../store/app.store'; // Import Zustand store
+import { useAuthStore } from '../store/auth.store'; // Import Zustand store
 
 const LogoutButton: React.FC = () => {
   const navigate = useNavigate();
