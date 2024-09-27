@@ -28,7 +28,7 @@ const PrivateRoute = () => {
     !logoutInitiated && (
       <Navigate
         to="/login"
-        state={{ from: window.location.pathname }} // Send the route they tried to access
+        state={{ from: window.location.pathname }} // Send the route user tried to access
         replace
       />
     )

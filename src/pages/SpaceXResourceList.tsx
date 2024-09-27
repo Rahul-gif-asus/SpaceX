@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { Table, Input, Select, Loader, Pagination, Text } from '@mantine/core';
-import { showNotification, updateNotification } from '@mantine/notifications'; // Import updateNotification
+import { showNotification, updateNotification } from '@mantine/notifications'; 
 import LogoutButton from '../components/Logout';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom'; 
+import { useLaunchStore } from '../store/launch.store'; // Import Zustand store
 
 // Fetch SpaceX launches from API
 const fetchLaunches = async () => {
@@ -13,25 +14,52 @@ const fetchLaunches = async () => {
 };
 
 const SpaceXResourceList: React.FC = () => {
-  const pageSize = 10; // Set the number of launches per page
-  const [page, setPage] = useState(1); // Pagination state
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sortCriteria, setSortCriteria] = useState<'asc' | 'desc'>('asc');
-  const [filterSuccess, setFilterSuccess] = useState<'all' | 'successful' | 'failed'>('all');
-  const [loadingMessage, setLoadingMessage] = useState('Fetching SpaceX Launches...'); // Custom loading message
-  const navigate = useNavigate(); // Initialize navigate function for redirection
+  const navigate = useNavigate(); 
+
+  // Zustand store state and actions
+  const {
+    page,
+    setPage,
+    searchTerm,
+    setSearchTerm,
+    sortCriteria,
+    setSortCriteria,
+    filterSuccess,
+    setFilterSuccess,
+    setLaunches,
+  } = useLaunchStore((state) => ({
+    page: state.page,
+    setPage: state.setPage,
+    searchTerm: state.searchTerm,
+    setSearchTerm: state.setSearchTerm,
+    sortCriteria: state.sortCriteria,
+    setSortCriteria: state.setSortCriteria,
+    filterSuccess: state.filterSuccess,
+    setFilterSuccess: state.setFilterSuccess,
+    setLaunches: state.setLaunches,
+  }));
+
+  const pageSize = 10; // Number of launches per page
+  const [loadingMessage, setLoadingMessage] = React.useState('Fetching SpaceX Launches...');
 
   const { data, isLoading, error } = useQuery(['spacexLaunches'], fetchLaunches);
+
+  // Set launches in Zustand store when data is fetched
+  useEffect(() => {
+    if (data) {
+      setLaunches(data); // Set launches in the Zustand store
+    }
+  }, [data, setLaunches]);
 
   // Show loading notification when data is loading
   useEffect(() => {
     if (isLoading) {
       showNotification({
-        id: 'loading-data',  // Provide a unique ID to avoid multiple notifications
+        id: 'loading-data', 
         title: 'Loading Data',
         message: 'Fetching SpaceX launches...',
         color: 'blue',
-        autoClose: false, // Keep it open until the data loads
+        autoClose: false,
         withCloseButton: false,
       });
 
@@ -43,15 +71,15 @@ const SpaceXResourceList: React.FC = () => {
     }
   }, [isLoading]);
 
-  // Update notification once data is successfully loaded
+  // Update notification when data is successfully loaded
   useEffect(() => {
     if (data) {
       updateNotification({
-        id: 'loading-data',  // Reference the same ID to update the notification
+        id: 'loading-data',
         title: 'Launches Loaded',
         message: 'Successfully loaded SpaceX launches data.',
         color: 'green',
-        autoClose: 2500,  // Automatically close after 2.5 seconds
+        autoClose: 2500,
         withCloseButton: false,
       });
     }
@@ -79,7 +107,6 @@ const SpaceXResourceList: React.FC = () => {
   const filteredData = data.filter((launch: any) => {
     const matchesSearch = launch.name.toLowerCase().includes(searchTerm.toLowerCase());
 
-    // Filter by success status
     if (filterSuccess === 'successful' && !launch.success) return false;
     if (filterSuccess === 'failed' && launch.success) return false;
 
@@ -93,13 +120,13 @@ const SpaceXResourceList: React.FC = () => {
       : new Date(b.date_utc).getTime() - new Date(a.date_utc).getTime()
   );
 
-  // Apply pagination AFTER filtering and sorting
+  // Pagination
   const totalFiltered = sortedData.length;
   const paginatedData = sortedData.slice((page - 1) * pageSize, page * pageSize);
 
   // Handle row click to navigate to SpaceXDetailPage
   const handleRowClick = (launchId: string) => {
-    navigate(`/private/spacexdetailpage/${launchId}`); // Pass launchId in the URL for the detail page
+    navigate(`/private/spacexdetailpage/${launchId}`); 
   };
 
   return (
@@ -117,7 +144,7 @@ const SpaceXResourceList: React.FC = () => {
           value={searchTerm}
           onChange={(e) => {
             setSearchTerm(e.currentTarget.value);
-            setPage(1); // Reset to first page when filter changes
+            setPage(1);
           }}
           style={{ marginBottom: '1rem' }}
         />
@@ -130,7 +157,7 @@ const SpaceXResourceList: React.FC = () => {
           onChange={(value: 'asc' | 'desc' | null) => {
             if (value) {
               setSortCriteria(value);
-              setPage(1); // Reset to first page when sorting changes
+              setPage(1);
             }
           }}
           data={[
@@ -148,7 +175,7 @@ const SpaceXResourceList: React.FC = () => {
           onChange={(value: 'all' | 'successful' | 'failed' | null) => {
             if (value) {
               setFilterSuccess(value);
-              setPage(1); // Reset to first page when filtering changes
+              setPage(1);
             }
           }}
           data={[
@@ -173,7 +200,7 @@ const SpaceXResourceList: React.FC = () => {
           {paginatedData.map((launch: any) => (
             <tr
               key={launch.id}
-              onClick={() => handleRowClick(launch.id)} // Row becomes clickable
+              onClick={() => handleRowClick(launch.id)} 
               style={{
                 cursor: 'pointer',
                 transition: 'background-color 0.3s',
