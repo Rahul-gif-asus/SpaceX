@@ -17,6 +17,7 @@ const LogoutButton: React.FC = () => {
       message: 'You have successfully logged out. Redirecting to login page...',
       color: 'green',
       autoClose: 2500,
+      withCloseButton: false,
     });
 
     // Redirect to login page after delay
