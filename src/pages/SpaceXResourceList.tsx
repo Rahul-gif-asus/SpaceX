@@ -190,12 +190,6 @@ const SpaceXResourceList: React.FC = () => {
         />
       </div>
 
-      {filteredData.length === 0 && (
-        <Text color="dimmed" size="lg" weight={500} style={{ textAlign: 'center', marginTop: '1rem' }}>
-          No SpaceX launches found matching the applied filters.
-        </Text>
-      )}
-
       <Table style={{ marginTop: '2rem', borderCollapse: 'collapse', width: '100%' }}>
         <thead>
           <tr>
@@ -206,26 +200,46 @@ const SpaceXResourceList: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {paginatedData.map((launch: any) => (
-            <tr
-              key={launch.id}
-              onClick={() => handleRowClick(launch.id)}
-              style={{
-                cursor: 'pointer',
-                transition: 'background-color 0.3s',
-                borderBottom: '1px solid #ddd',
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f0f0f0')}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'white')}
-            >
-              <td style={{ padding: '10px' }}>{launch.name}</td>
-              <td style={{ padding: '10px' }}>{new Date(launch.date_utc).toLocaleDateString()}</td>
-              <td style={{ padding: '10px' }}>{launch.details || 'No details available'}</td>
-              <td style={{ padding: '10px' }}>{launch.success ? 'Yes' : 'No'}</td>
+          {paginatedData.length > 0 ? (
+            paginatedData.map((launch: any) => (
+              <tr
+                key={launch.id}
+                onClick={() => handleRowClick(launch.id)}
+                style={{
+                  cursor: 'pointer',
+                  transition: 'background-color 0.3s',
+                  borderBottom: '1px solid #ddd',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f0f0f0')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'white')}
+              >
+                <td style={{ padding: '10px' }}>{launch.name}</td>
+                <td style={{ padding: '10px' }}>{new Date(launch.date_utc).toLocaleDateString()}</td>
+                <td style={{ padding: '10px' }}>{launch.details || 'No details available'}</td>
+                <td style={{ padding: '10px' }}>{launch.success ? 'Yes' : 'No'}</td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td
+                colSpan={4}
+                style={{
+                  padding: '20px',
+                  textAlign: 'center',
+                  color: '#909090',
+                  fontSize: '18px', // This is equivalent to size="lg"
+                  fontWeight: 500,
+                  marginTop: '1rem',
+                }}
+              >
+                No SpaceX launches found matching the applied filters.
+              </td>
+
             </tr>
-          ))}
+          )}
         </tbody>
       </Table>
+
 
       <Pagination
         value={page}

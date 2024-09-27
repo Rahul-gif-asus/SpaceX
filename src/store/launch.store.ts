@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { showNotification } from '@mantine/notifications'; // Importing mantine notifications
 
 // Function to fetch launches (centralized in the store)
 const fetchLaunches = async () => {
@@ -44,8 +45,16 @@ export const useFetchLaunches = () => {
     onSuccess: (data) => {
       setLaunches(data);
     },
-    onError: () => {
-      // Handle error case if needed
+    onError: (error: any) => {
+      // Handle error case
+      console.error('Error fetching SpaceX launches:', error);
+
+      // Optional: Show error notification to the user
+      showNotification({
+        title: 'Error',
+        message: 'Failed to load SpaceX launches. Please try again later.',
+        color: 'red',
+      });
     },
   });
 };
