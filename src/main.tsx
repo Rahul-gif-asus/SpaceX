@@ -9,7 +9,7 @@ import { Notifications } from '@mantine/notifications'; // Import Notifications 
 import App from './App';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
-import PrivateRoute from './components/PrivateRoute';
+import PrivateRoute from './routes/PrivateRoute';
 import SpaceXResourceList from './pages/SpaceXResourceList';
 import SpaceXDetailPage from './pages/SpaceXDetailPage';
 

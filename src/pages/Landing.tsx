@@ -1,11 +1,28 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Group, Text, Container, SimpleGrid } from '@mantine/core';
 import { IconRocket, IconSearch, IconLayoutGrid } from '@tabler/icons-react';
-import { useNavigate } from 'react-router-dom'; // To navigate to login page
+import { useNavigate } from 'react-router-dom';
 import './css/Landing.scss';
+
+// Import Zustand store
+import { useUIStore } from '../store/ui.store';
 
 const Landing = () => {
   const navigate = useNavigate();
+
+  // Zustand store state and actions
+  const { clickGetStarted, clickLearnMore, hasClickedGetStarted, hasClickedLearnMore } = useUIStore();
+
+  // Effect for logging or additional logic when buttons are clicked
+  useEffect(() => {
+    if (hasClickedGetStarted) {
+      console.log('Get Started button was clicked');
+      // You can perform more side-effects here if needed
+    }
+    if (hasClickedLearnMore) {
+      console.log('Learn More button was clicked');
+    }
+  }, [hasClickedGetStarted, hasClickedLearnMore]);
 
   return (
     <div className="landing-page">
@@ -45,7 +62,10 @@ const Landing = () => {
                 size="lg"
                 radius="xl"
                 color="blue"
-                onClick={() => navigate('/login')}
+                onClick={() => {
+                  clickGetStarted(); // Track button click with Zustand
+                  navigate('/login');
+                }}
               >
                 Get Started
               </Button>
@@ -54,6 +74,7 @@ const Landing = () => {
                 variant="outline"
                 radius="xl"
                 onClick={() => {
+                  clickLearnMore(); // Track button click with Zustand
                   const featuresSection = document.getElementById('features');
                   if (featuresSection) {
                     featuresSection.scrollIntoView({ behavior: 'smooth' });
@@ -72,7 +93,7 @@ const Landing = () => {
         <Container>
           <Text size="lg" weight={700} align="center" mt="xl" mb="md">Why Choose Our Explorer?</Text>
           <SimpleGrid cols={3} spacing="xl" mt="md" breakpoints={[
-            { maxWidth: 'md', cols: 1 }, // Make grid responsive on smaller screens
+            { maxWidth: 'md', cols: 1 }, // Responsive behavior
             { maxWidth: 'sm', cols: 1 }
           ]}>
             <div className="feature">
