@@ -30,33 +30,42 @@ A React-based web application to explore SpaceX launches with advanced features 
 ├── .env
 ├── .gitignore
 ├── index.html
+├── package-lock.json
 ├── package.json
+├── README.md
 ├── tsconfig.json
 ├── vite.config.ts
-├── src
-│   ├── components
-│   │   └── Logout.tsx
-│   ├── pages
-│   │   └── Landing.tsx
-│   │   └── Login.tsx
-│   │   └── SpaceXDetailPage.tsx
-│   │   └── SpaceXResourceList.tsx
-│   │   └── css
-│   │       └── Landing.scss
-│   │       └── SpaceXDetailPage.scss
-│   │       └── SpaceXResourceList.scss
-│   ├── routes
-│   │   └── PrivateRoute.tsx
-│   ├── store
-│   │   └── auth.store.ts
-│   │   └── launch.store.ts
-│   │   └── ui.store.ts
-│   ├── styles
-│   │   └── abstracts
-│   │       └── _colours.scss
-│   │       └── _fonts.scss
-│   └── theme
-│       └── index.ts
+└── src
+    ├── App.scss
+    ├── App.tsx
+    ├── main.tsx
+    ├── style.scss
+    ├── vite-env.d.ts
+    ├── components
+    │   └── Logout.tsx
+    ├── pages
+    │   ├── Landing.tsx
+    │   ├── Login.tsx
+    │   ├── SpaceXDetailPage.tsx
+    │   ├── SpaceXResourceList.tsx
+    │   └── css
+    │       ├── Landing.scss
+    │       ├── SpaceXDetailPage.scss
+    │       └── SpaceXResourceList.scss
+    ├── routes
+    │   └── PrivateRoute.tsx
+    ├── store
+    │   ├── auth.store.ts
+    │   ├── launch.store.ts
+    │   └── ui.store.ts
+    ├── styles
+    │   └── abstracts
+    │       ├── _colours.scss
+    │       ├── _fonts.scss
+    │       └── index.scss
+    └── theme
+        └── index.ts
+
 ```
 
 ## 🚀 Getting Started
