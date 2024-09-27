@@ -51,8 +51,8 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <QueryClientProvider client={queryClient}>
       <MantineProvider withGlobalStyles withNormalizeCSS> {/* Wrap with MantineProvider */}
         <Notifications /> 
-        <SpeedInsights dsn="prj_Q8cDnKqbqVe1YRBKv5hr14gKg7DY" framework="vite" /> 
-
+        {/* <SpeedInsights dsn="prj_Q8cDnKqbqVe1YRBKv5hr14gKg7DY" framework="vite" />  */}
+        <SpeedInsights />
         <RouterProvider router={router} />
       </MantineProvider>
     </QueryClientProvider>
