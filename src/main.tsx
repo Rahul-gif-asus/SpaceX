@@ -12,6 +12,8 @@ import Login from './pages/Login';
 import PrivateRoute from './routes/PrivateRoute';
 import SpaceXResourceList from './pages/SpaceXResourceList';
 import SpaceXDetailPage from './pages/SpaceXDetailPage';
+import { SpeedInsights } from '@vercel/speed-insights/react';
+
 
 export const routes = [
   {
@@ -48,7 +50,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <MantineProvider withGlobalStyles withNormalizeCSS> {/* Wrap with MantineProvider */}
-        <Notifications /> {/* Add Notifications component */}
+        <Notifications /> 
+        <SpeedInsights dsn="prj_Q8cDnKqbqVe1YRBKv5hr14gKg7DY" framework="vite" /> 
+
         <RouterProvider router={router} />
       </MantineProvider>
     </QueryClientProvider>
