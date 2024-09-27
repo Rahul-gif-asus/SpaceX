@@ -1,17 +1,9 @@
 import React, { useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import { Table, Input, Select, Loader, Pagination, Text } from '@mantine/core';
 import { showNotification, updateNotification } from '@mantine/notifications'; 
 import LogoutButton from '../components/Logout';
 import { useNavigate } from 'react-router-dom'; 
-import { useLaunchStore } from '../store/launch.store'; // Import Zustand store
-
-// Fetch SpaceX launches from API
-const fetchLaunches = async () => {
-  const { data } = await axios.get('https://api.spacexdata.com/v4/launches');
-  return data;
-};
+import { useLaunchStore, useFetchLaunches } from '../store/launch.store'; // Import Zustand store
 
 const SpaceXResourceList: React.FC = () => {
   const navigate = useNavigate(); 
@@ -26,7 +18,7 @@ const SpaceXResourceList: React.FC = () => {
     setSortCriteria,
     filterSuccess,
     setFilterSuccess,
-    setLaunches,
+    launches,
   } = useLaunchStore((state) => ({
     page: state.page,
     setPage: state.setPage,
@@ -36,20 +28,13 @@ const SpaceXResourceList: React.FC = () => {
     setSortCriteria: state.setSortCriteria,
     filterSuccess: state.filterSuccess,
     setFilterSuccess: state.setFilterSuccess,
-    setLaunches: state.setLaunches,
+    launches: state.launches,
   }));
 
   const pageSize = 10; // Number of launches per page
   const [loadingMessage, setLoadingMessage] = React.useState('Fetching SpaceX Launches...');
 
-  const { data, isLoading, error } = useQuery(['spacexLaunches'], fetchLaunches);
-
-  // Set launches in Zustand store when data is fetched
-  useEffect(() => {
-    if (data) {
-      setLaunches(data); // Set launches in the Zustand store
-    }
-  }, [data, setLaunches]);
+  const { isLoading, error } = useFetchLaunches(); // Fetch launches through Zustand's store
 
   // Show loading notification when data is loading
   useEffect(() => {
@@ -73,7 +58,7 @@ const SpaceXResourceList: React.FC = () => {
 
   // Update notification when data is successfully loaded
   useEffect(() => {
-    if (data) {
+    if (launches && !isLoading) {
       updateNotification({
         id: 'loading-data',
         title: 'Launches Loaded',
@@ -83,7 +68,7 @@ const SpaceXResourceList: React.FC = () => {
         withCloseButton: false,
       });
     }
-  }, [data]);
+  }, [launches, isLoading]);
 
   if (isLoading) {
     return (
@@ -104,7 +89,7 @@ const SpaceXResourceList: React.FC = () => {
   }
 
   // Filter and Search functionality
-  const filteredData = data.filter((launch: any) => {
+  const filteredData = launches.filter((launch: any) => {
     const matchesSearch = launch.name.toLowerCase().includes(searchTerm.toLowerCase());
 
     if (filterSuccess === 'successful' && !launch.success) return false;
