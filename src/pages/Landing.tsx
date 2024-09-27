@@ -6,6 +6,7 @@ import './css/Landing.scss';
 
 // Import Zustand store
 import { useUIStore } from '../store/ui.store';
+const discordInviteLink = import.meta.env.VITE_DISCORD_INVITE_LINK;
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -130,10 +131,11 @@ const Landing = () => {
               size="lg"
               radius="xl"
               color="blue"
-              onClick={() => window.open('https://discord.gg/3aPrbQd2Xb', '_blank')}
+              onClick={() => window.open(import.meta.env.VITE_DISCORD_INVITE_LINK, '_blank')}
             >
               Join Discord
             </Button>
+
           </Group>
         </Container>
       </section>
