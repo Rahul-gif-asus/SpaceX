@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom'; // Import useLocation
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button, TextInput, Container, Paper, Title } from '@mantine/core';
 import { showNotification, cleanNotifications } from '@mantine/notifications'; // Import cleanNotifications
 import { useAuthStore } from '../store/app.store';
@@ -8,7 +8,7 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
-  const location = useLocation(); // Capture previous location
+  const location = useLocation();
 
   // Zustand store for managing auth state
   const { isAuthenticated, login } = useAuthStore((state) => ({
@@ -19,7 +19,10 @@ const Login = () => {
   // Check if the user was redirected from a private route
   useEffect(() => {
     if (location.state?.from && !isAuthenticated) {
-      // If the user was redirected, show a notification
+      // Clean any existing notifications to avoid duplication
+      cleanNotifications();
+
+      // Show the "Access Denied" notification if redirected
       showNotification({
         id: 'redirected-login', // Unique ID to avoid duplication
         title: 'Access Denied',
@@ -29,7 +32,7 @@ const Login = () => {
         withCloseButton: false,
       });
     }
-  }, [location, isAuthenticated]);
+  }, [location.state?.from, isAuthenticated]);
 
   // Redirect if already authenticated
   useEffect(() => {

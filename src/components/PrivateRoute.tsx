@@ -1,18 +1,37 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuthStore } from '../store/app.store';
+import { showNotification } from '@mantine/notifications';
+import { useEffect } from 'react';
 
 const PrivateRoute = () => {
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const { isAuthenticated, logoutInitiated } = useAuthStore((state) => ({
+    isAuthenticated: state.isAuthenticated,
+    logoutInitiated: state.logoutInitiated,
+  }));
 
+  useEffect(() => {
+    if (!isAuthenticated && !logoutInitiated) {
+      showNotification({
+        title: 'Access Denied',
+        message: 'Please log in to access the requested page.',
+        color: 'yellow',
+        autoClose: 3000,
+        withCloseButton: true,
+      });
+    }
+  }, [isAuthenticated, logoutInitiated]);
+
+  // Allow access if authenticated or in the process of logging out
   return isAuthenticated ? (
     <Outlet /> // Render child routes if authenticated
   ) : (
-    // Pass the current location in state when redirecting to login
-    <Navigate
-      to="/login"
-      state={{ from: window.location.pathname }} // Send the route they tried to access
-      replace
-    />
+    !logoutInitiated && (
+      <Navigate
+        to="/login"
+        state={{ from: window.location.pathname }} // Send the route they tried to access
+        replace
+      />
+    )
   );
 };
 

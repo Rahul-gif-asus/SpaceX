@@ -5,10 +5,10 @@ import { useAuthStore } from '../store/app.store'; // Import Zustand store
 
 const LogoutButton: React.FC = () => {
   const navigate = useNavigate();
-  const logout = useAuthStore((state) => state.logout); // Get logout function from Zustand
+  const { logout } = useAuthStore(); // Get logout function from Zustand
 
   const handleLogout = () => {
-    // Call Zustand logout which clears the auth state and localStorage
+    // Call Zustand logout which clears the auth state and localStorage, and sets logoutInitiated to true
     logout(); 
     
     // Show logout notification
