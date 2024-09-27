@@ -207,14 +207,14 @@ const SpaceXDetailPage: React.FC = () => {
             )}
 
             {/* Flickr Images with Preview */}
-            <Title order={4} mt="lg" align="center" style={{ color: '#2980B9' }}>Flickr Images</Title>
+            <Title order={4} mt="lg" align="center" style={{ color: '#2980B9' }}>Gallery Photos</Title>
             <Grid mt="md">
               {rocketData.flickr_images.map((image: string, index: number) => (
                 <Grid.Col span={4} key={index}>
                   <Image
                     src={image}
                     alt={`Rocket Image ${index}`}
-                    radius="lg"
+                    radius="md"
                     sx={{
                       transition: 'transform 0.3s',
                       '&:hover': {
