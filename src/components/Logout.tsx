@@ -33,7 +33,7 @@ const LogoutButton: React.FC = () => {
       style={{
         position: 'absolute',
         top: '20px', 
-        right: '20px', 
+        right: '2rem', 
         zIndex: 1000, // Ensures button appears on top of everything
       }}
     >

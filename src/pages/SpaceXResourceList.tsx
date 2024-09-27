@@ -1,14 +1,13 @@
 import React, { useEffect } from 'react';
-import { Table, Input, Select, Loader, Pagination, Text } from '@mantine/core';
-import { showNotification, updateNotification } from '@mantine/notifications'; 
+import { Table, Input, Select, Loader, Pagination, Text, Button } from '@mantine/core';
+import { showNotification, updateNotification } from '@mantine/notifications';
 import LogoutButton from '../components/Logout';
-import { useNavigate } from 'react-router-dom'; 
-import { useLaunchStore, useFetchLaunches } from '../store/launch.store'; // Import Zustand store
+import { useNavigate } from 'react-router-dom';
+import { useLaunchStore, useFetchLaunches } from '../store/launch.store';
 
 const SpaceXResourceList: React.FC = () => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
-  // Zustand store state and actions
   const {
     page,
     setPage,
@@ -31,16 +30,21 @@ const SpaceXResourceList: React.FC = () => {
     launches: state.launches,
   }));
 
-  const pageSize = 10; // Number of launches per page
+  const pageSize = 10;
   const [loadingMessage, setLoadingMessage] = React.useState('Fetching SpaceX Launches...');
+  const { isLoading, error } = useFetchLaunches();
 
-  const { isLoading, error } = useFetchLaunches(); // Fetch launches through Zustand's store
+  const handleClearFilters = () => {
+    setSearchTerm('');
+    setSortCriteria('asc');
+    setFilterSuccess('all');
+    setPage(1);
+  };
 
-  // Show loading notification when data is loading
   useEffect(() => {
     if (isLoading) {
       showNotification({
-        id: 'loading-data', 
+        id: 'loading-data',
         title: 'Loading Data',
         message: 'Fetching SpaceX launches...',
         color: 'blue',
@@ -56,7 +60,6 @@ const SpaceXResourceList: React.FC = () => {
     }
   }, [isLoading]);
 
-  // Update notification when data is successfully loaded
   useEffect(() => {
     if (launches && !isLoading) {
       updateNotification({
@@ -88,7 +91,6 @@ const SpaceXResourceList: React.FC = () => {
     return <Text color="red">Error loading SpaceX launches.</Text>;
   }
 
-  // Filter and Search functionality
   const filteredData = launches.filter((launch: any) => {
     const matchesSearch = launch.name.toLowerCase().includes(searchTerm.toLowerCase());
 
@@ -98,32 +100,51 @@ const SpaceXResourceList: React.FC = () => {
     return matchesSearch;
   });
 
-  // Sort functionality by date
   const sortedData = filteredData.sort((a: any, b: any) =>
     sortCriteria === 'asc'
       ? new Date(a.date_utc).getTime() - new Date(b.date_utc).getTime()
       : new Date(b.date_utc).getTime() - new Date(a.date_utc).getTime()
   );
 
-  // Pagination
   const totalFiltered = sortedData.length;
   const paginatedData = sortedData.slice((page - 1) * pageSize, page * pageSize);
 
-  // Handle row click to navigate to SpaceXDetailPage
   const handleRowClick = (launchId: string) => {
-    navigate(`/private/spacexdetailpage/${launchId}`); 
+    navigate(`/private/spacexdetailpage/${launchId}`);
   };
 
   return (
-    <div style={{ padding: '2rem' }}>
-      <LogoutButton />
+    <div style={{ padding: '2rem', position: 'relative' }}>
+      {/* Logout Button */}
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
+        <LogoutButton />
+      </div>
 
-      <h1 style={{ marginBottom: '1.5rem', color: 'black', fontFamily: 'SpaceX, sans-serif' }}>
-        Search SpaceX Launches
-      </h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+        <h1 style={{ color: 'black', fontFamily: 'SpaceX, sans-serif' }}>
+          Search SpaceX Launches
+        </h1>
+
+
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
+        <Button
+          variant="outline"
+          color="gray"
+          onClick={handleClearFilters}
+          style={{
+            padding: '8px 16px',
+            borderRadius: '8px',
+            fontWeight: 500,
+            fontSize: '14px',
+          }}
+        >
+          Clear Filters
+        </Button>
+      </div>
+
 
       <div style={{ marginBottom: '2rem' }}>
-        {/* Search Input */}
         <Input
           placeholder="Search launches"
           value={searchTerm}
@@ -134,7 +155,6 @@ const SpaceXResourceList: React.FC = () => {
           style={{ marginBottom: '1rem' }}
         />
 
-        {/* Sort Selector */}
         <Select
           label="Sort by Date"
           placeholder="Pick one"
@@ -152,7 +172,6 @@ const SpaceXResourceList: React.FC = () => {
           style={{ marginBottom: '1rem' }}
         />
 
-        {/* Filter for Success/Failure */}
         <Select
           label="Filter by Launch Status"
           placeholder="Pick one"
@@ -171,7 +190,12 @@ const SpaceXResourceList: React.FC = () => {
         />
       </div>
 
-      {/* Table to display data */}
+      {filteredData.length === 0 && (
+        <Text color="dimmed" size="lg" weight={500} style={{ textAlign: 'center', marginTop: '1rem' }}>
+          No SpaceX launches found matching the applied filters.
+        </Text>
+      )}
+
       <Table style={{ marginTop: '2rem', borderCollapse: 'collapse', width: '100%' }}>
         <thead>
           <tr>
@@ -185,7 +209,7 @@ const SpaceXResourceList: React.FC = () => {
           {paginatedData.map((launch: any) => (
             <tr
               key={launch.id}
-              onClick={() => handleRowClick(launch.id)} 
+              onClick={() => handleRowClick(launch.id)}
               style={{
                 cursor: 'pointer',
                 transition: 'background-color 0.3s',
@@ -203,7 +227,6 @@ const SpaceXResourceList: React.FC = () => {
         </tbody>
       </Table>
 
-      {/* Pagination Component */}
       <Pagination
         value={page}
         onChange={setPage}
